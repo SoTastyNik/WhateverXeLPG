@@ -1,4 +1,5 @@
 {
+  "-wex-mtl-probe": [],
   "-wex-adln-config-stage": [
     "-adlnconfigstage",
     "-n97configstage"

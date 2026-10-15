@@ -14,6 +14,8 @@ code=r'''
 #include <vector>
 #include "kern_xelp_platform.hpp"
 std::vector<int> events;bool publish=true,published=false;uint32_t identity=0x9a498086;
+bool probeRequested=false;
+bool checkKernelArgument(const char *name){assert(!strcmp(name,"-wex-mtl-probe"));return probeRequested;}
 struct Object {virtual ~Object()=default;};
 struct OSData:Object {uint32_t value=0;void *getBytesNoCopy(){return &value;}size_t getLength(){return 4;}};
 OSData fake;Object customModel;bool hasModel=false;unsigned modelWrites=0;Object *deviceProperty=nullptr;
@@ -39,6 +41,7 @@ struct XeHost {
  struct vc_info{};vc_info consoleVinfo;bool gotConsoleVinfo=false;
  struct XE {void processKernel(KernelPatcher &,DeviceInfo *){events.push_back(8);}} xe;
  void processKernel(KernelPatcher &);
+ void probeMeteorLake(IOPCIDevice *,const XELP::Profile &){assert(published);events.push_back(7);}
 };
 '''.replace('// DEVICE_ADAPTER',adapter)+body+r'''
 int main(){KernelPatcher patcher;IOPCIDevice gpu;
@@ -51,7 +54,18 @@ for(unsigned test=0;test<6;++test){
  else if(test==2 || test==5){assert(!host.active&&graphics.off);assert(events.size()==4);}
  else {assert(host.active&&!graphics.off);assert(events.front()==1);assert(events[events.size()-2]==8);}
 }
-puts("PASS actual host admission: absent/unpublished/unsupported GPUs never enter Xe; published PCI reads precede selected-driver dispatch");}
+// Diagnostic mode must suppress donor dispatch even when device-id selects TGL.
+for(bool overrideId:{false,true}) {
+ events.clear();published=false;publish=true;probeRequested=true;identity=0x7D558086;
+ fake.value=0x9A49;deviceProperty=overrideId?&fake:nullptr;graphics.off=false;
+ DeviceInfo::value.videoBuiltin=&gpu;XeHost host;host.resetFramebuffer=XeHost::FB_COPY;
+ host.processKernel(patcher);
+ assert(!host.active && graphics.off && host.resetFramebuffer==XeHost::FB_NONE);
+ assert((events==std::vector<int>{1,2,3,7,9}));
+}
+events.clear();publish=false;published=false;
+{XeHost host;host.processKernel(patcher);assert((events==std::vector<int>{1,9}));}
+puts("PASS actual host admission and MTL diagnostic dispatch: no unpublished access, donor dispatch or framebuffer handoff");}
 '''
 with tempfile.TemporaryDirectory(prefix='wxe-host-') as d:
  p=Path(d);(p/'test.cpp').write_text(code)

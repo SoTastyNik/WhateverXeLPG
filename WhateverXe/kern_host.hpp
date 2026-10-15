@@ -10,6 +10,7 @@ private:
  XE xe;
  bool active {};
  void processKernel(KernelPatcher &);
+ void probeMeteorLake(IOPCIDevice *,const XELP::Profile &);
  void processKext(KernelPatcher &,size_t,mach_vm_address_t,size_t);
  enum { FB_DETECT, FB_RESET, FB_COPY, FB_ZEROFILL, FB_NONE, FB_TOTAL };
  uint32_t resetFramebuffer {FB_DETECT};

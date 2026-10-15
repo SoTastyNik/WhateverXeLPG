@@ -80,6 +80,7 @@ Alder Lake-N / Twin Lakeで世代選択や個別機能の有効化引数を追�
 | `-wexoff` | WhateverXeを無効にする。 |
 | `-wexbeta` | プラグインのOSバージョンチェックを回避する。kernel／driverの一致条件は維持する。 |
 | `-wex-tgl-off` | Tiger Lakeの処理を無効にする。 |
+| `-wex-mtl-probe` | Big Sur `20G1443`上で、物理Meteor Lake `7D55`、revision `08`のdisplay IPを読み取り専用で調べる任意の機能。device IDが変更されておらず、ファームウェアがPCIメモリアクセスを有効にしている必要があります。この物理GPUでは上書き設定があっても通常のバックエンド処理を抑止します。画面出力やアクセラレーションを有効にするものではありません。 |
 
 ## ロードマップ
 

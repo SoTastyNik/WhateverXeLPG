@@ -26,6 +26,12 @@ void XeHost::processKernel(KernelPatcher &patcher) {
  const bool published=gpu && WIOKit::awaitPublishing(gpu);
  const auto profile=published ? XELP::deviceProfile(gpu) : XELP::Profile {};
  active=profile.admitted();
+ // Opt-in observation owns this physical GPU even if an override selected
+ // an older backend. Never dispatch donor or framebuffer-copy paths here.
+ if(published && checkKernelArgument("-wex-mtl-probe") && profile.identity==0x7D558086) {
+  active=false;
+  probeMeteorLake(gpu,profile);
+ }
  if(published) {
   uint32_t selection[] {1,profile.identity,profile.revision,profile.effectiveIdentity,
    static_cast<uint32_t>(profile.family),static_cast<uint32_t>(profile.display),

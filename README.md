@@ -102,6 +102,7 @@ Alder Lake-N / Twin Lake.
 | `-wexoff` | Disable WhateverXe. |
 | `-wexbeta` | Bypass the plugin's OS-version check. Exact kernel/driver checks still apply. |
 | `-wex-tgl-off` | Disable the Tiger Lake path. |
+| `-wex-mtl-probe` | Opt-in read-only display-IP probe for physical Meteor Lake `7D55`, revision `08`, on Big Sur `20G1443`. Requires an unmodified device ID and firmware-enabled PCI memory access. Suppresses normal backend dispatch for this physical GPU, including with an override; it does not enable display output or acceleration. |
 
 ## Roadmap
 
