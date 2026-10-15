@@ -19,6 +19,9 @@ The current target is **macOS Big Sur build 20G1443**.
 
 Meteor Lake `7D55` is recognized for identification only. It has no implemented
 backend; internal display output and GPU acceleration are not supported.
+The optional `-wex-mtl-probe` display-IP probe requires only Lilu and
+WhateverXe on the specified target build. It does not require the Xe root
+patch, AMFIPass, or the acceleration boot arguments below.
 
 Support varies by system and connector layout. The table includes implemented
 backends, not a guarantee for every machine. See [device selection](docs/device-selection.md)

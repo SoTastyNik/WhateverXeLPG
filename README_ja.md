@@ -16,6 +16,7 @@ WhateverXeは、一部のIntel Xe-LP内蔵GPU向けにAppleのグラフィック
 | Alder Lake-N / Twin Lake | `46D0`–`46D4` |
 
 Meteor Lake `7D55`は識別のみ対応しています。バックエンドは未実装であり、内蔵ディスプレイ出力とGPUアクセラレーションには対応していません。
+任意の`-wex-mtl-probe`によるdisplay IPの確認には、指定された対象build上のLiluとWhateverXeのみが必要です。Xe root patch、AMFIPass、下記のアクセラレーション用boot引数は不要です。
 
 対応状況は機種やコネクタ構成によって異なります。この表はバックエンドの実装範囲を示すもので、すべての機種での動作を保証するものではありません。詳細な選択条件と上書き設定は[デバイス選択](docs/device-selection.md)を参照してください。
 

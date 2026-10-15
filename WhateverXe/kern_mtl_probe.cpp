@@ -26,6 +26,6 @@ struct ProbeIO {
 
 void XeHost::probeMeteorLake(IOPCIDevice *pci,const XELP::Profile &profile) {
     ProbeIO io {pci};
-    const auto result=MTLProbe::collect(io,profile,version);
+    auto result=MTLProbe::collect(io,profile,version);
     pci->setProperty("WhateverXeMeteorLakeProbe",&result,sizeof(result));
 }

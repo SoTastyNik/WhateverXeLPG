@@ -30,9 +30,9 @@ struct IOPCIDevice {
   assert(offset==0x10 && options==(kIOMapReadOnly|kIOMapInhibitCache));
   ++maps;return fail?nullptr:&mapping;
  }
- void setProperty(const char *name,const void *bytes,unsigned length){
+ bool setProperty(const char *name,void *bytes,unsigned length){
   assert(!strcmp(name,"WhateverXeMeteorLakeProbe") && length==sizeof(published));
-  memcpy(&published,bytes,length);++publications;
+  memcpy(&published,bytes,length);++publications;return true;
  }
 };
 struct XeHost {void probeMeteorLake(IOPCIDevice *,const XELP::Profile &);};
