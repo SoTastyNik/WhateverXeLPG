@@ -15,6 +15,8 @@ WhateverXeは、一部のIntel Xe-LP内蔵GPU向けにAppleのグラフィック
 | Tiger Lake | `9A40`、`9A49`、`9A78` |
 | Alder Lake-N / Twin Lake | `46D0`–`46D4` |
 
+Meteor Lake `7D55`は識別のみ対応しています。バックエンドは未実装であり、内蔵ディスプレイ出力とGPUアクセラレーションには対応していません。
+
 対応状況は機種やコネクタ構成によって異なります。この表はバックエンドの実装範囲を示すもので、すべての機種での動作を保証するものではありません。詳細な選択条件と上書き設定は[デバイス選択](docs/device-selection.md)を参照してください。
 
 Tiger LakeとAlder Lake-Nで、外部2画面の1920×1080・60Hz出力、Metal/OpenGL、ハードウェアHEVC、画面の消灯／復帰を確認しています。Tiger LakeではハードウェアH.264のエンコード／デコードも確認しています。3画面同時出力、システムスリープ、より高い解像度や他のコネクタ構成は追加検証が必要です。USB-Cと内蔵ディスプレイへの対応は下記ロードマップに含まれます。
@@ -87,10 +89,10 @@ Alder Lake-N / Twin Lakeで世代選択や個別機能の有効化引数を追�
 - Alder Lake／Raptor LakeのS/H/P/U対応
 - USB-C画面出力対応
 - 内蔵ディスプレイ対応
+- Meteor Lake `7D55`の内蔵ディスプレイ対応に向けた調査（動作するバックエンドは未実装）
 
 ### Not Planned
 
-- Xe-LPG対応
 - Xe2以降のアーキテクチャへの対応
 
 ## ビルドとテスト
@@ -101,6 +103,8 @@ macOS、Xcode command-line tools、Python 3.9以降、MacKernelSDK、Liluの開�
 python3 tools/build.py --release
 python3 tools/test.py
 ```
+
+ローカルのMacがない場合は、同梱のGitHub Actions **CI**ワークフローでIntel macOS runner上のCPUテストとDEBUG／RELEASEパッケージのビルドを実行できます。GitHubのforkでActionsを有効にし、**CI**の**Run workflow**を実行してください。成功した実行から**Artifacts**をダウンロードできます。テストログは**Test-results**に含まれます。ビルドの成功はGPUの互換性を保証するものではありません。
 
 kextとソースのmanifestは`build/`に出力されます。任意のdonor再生試験には`--donor /path/to/AppleIntelTGLGraphicsFramebuffer`と`--accelerator /path/to/AppleIntelTGLGraphics`を指定します。各試験が受け付ける正確なバイナリが必要です。CPUテストだけで実GPUの互換性が確認できるわけではありません。ビルドにWhateverGreenのソースは不要です。
 

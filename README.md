@@ -17,6 +17,9 @@ The current target is **macOS Big Sur build 20G1443**.
 | Tiger Lake | `9A40`, `9A49`, `9A78` |
 | Alder Lake-N / Twin Lake | `46D0`–`46D4` |
 
+Meteor Lake `7D55` is recognized for identification only. It has no implemented
+backend; internal display output and GPU acceleration are not supported.
+
 Support varies by system and connector layout. The table includes implemented
 backends, not a guarantee for every machine. See [device selection](docs/device-selection.md)
 for detailed selection conditions and overrides.
@@ -108,10 +111,10 @@ Alder Lake-N / Twin Lake.
 - Alder Lake and Raptor Lake S/H/P/U support
 - USB-C display output
 - Internal displays
+- Meteor Lake `7D55` internal-display research (no working backend yet)
 
 ### Not Planned
 
-- Xe-LPG support
 - Xe2 and later architectures
 
 ## Build and test
@@ -124,6 +127,12 @@ repository root, or pass their paths with `--sdk` and `--lilu`.
 python3 tools/build.py --release
 python3 tools/test.py
 ```
+
+For builds without a local Mac, the included GitHub Actions **CI** workflow runs
+CPU tests and builds DEBUG and RELEASE packages on an Intel macOS runner.
+In your GitHub fork, enable Actions and run **CI** using **Run workflow**.
+Successful runs provide the **Artifacts** download; **Test-results** contains
+the test logs. A successful build does not establish GPU compatibility.
 
 Kexts and a source manifest are written to `build/`. Optional donor replay tests
 accept `--donor /path/to/AppleIntelTGLGraphicsFramebuffer` and

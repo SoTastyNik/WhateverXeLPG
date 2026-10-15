@@ -14,6 +14,11 @@ Other entries in the table supply identification and display names only. A
 listed ID does not imply an implemented backend or a tested machine. See the
 [compatibility summary](../README.md#compatibility) for the current scope.
 
+Meteor Lake `7D55` is identification-only (Xe-LPDP display generation 14).
+Automatic selection leaves its backend disabled, and selecting `7D55` through
+an override is rejected. Selecting an older backend on Meteor Lake does not
+provide support and must not be used as a compatibility workaround.
+
 ## Advanced override: device-id
 
 To select an existing backend explicitly, set `device-id` on the integrated

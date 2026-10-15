@@ -24,6 +24,16 @@ int main() {
   auto nonIntel=select(0x123410DE,0,true,&value,4);assert(!nonIntel.admitted());
  }
  assert(implemented==8); // Recognition of other table rows adds no native backend.
+ // Meteor Lake recognition must not select the TGL donor or a display backend.
+ const auto mtl=identify(0x7D558086,8);
+ assert(mtl.identity==0x7D558086 && mtl.revision==8);
+ assert(mtl.family==Family::MeteorLake && mtl.display==Display::XeLPDP);
+ assert(mtl.gt==GT::Unknown && mtl.donor==Donor::Unknown && !mtl.admitted());
+ uint32_t mtlId=0x7D55;
+ assert(same(mtl,select(0x7D558086,8,true,&mtlId,4)));
+ assert(!select(0x9A498086,0,true,&mtlId,4).admitted());
+ ProbeConfig mtlProbe;mtlProbe.profile=mtl;mtlProbe.combo=mtlProbe.comboBackend=3;
+ assert(!mtlProbe.valid());
  uint32_t id=0x46D2;
  assert(select(0x12348086,0,true,&id,4).admitted());
  assert(!select(0x12348086,1,true,&id,4).admitted()); // Keep physical stepping guard.

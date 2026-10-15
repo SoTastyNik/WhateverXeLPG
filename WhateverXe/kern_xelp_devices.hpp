@@ -1,4 +1,5 @@
 // PCI families verified against Linux v6.12 i915_pciids.h.
+// Meteor Lake 7D55: https://dgpu-docs.intel.com/overview/supported-hardware/i915-driver-gpus.html
 // Display-name suggestions and limitations: see docs/device-selection.md.
 // No EU, board wiring or transport assumptions belong in this table.
 #ifndef KERN_XELP_DEVICES_HPP
@@ -6,8 +7,8 @@
 #include <stdint.h>
 #include <stddef.h>
 namespace XELP {
-enum class Family : uint32_t { Unknown, TigerLake, AlderLakeN, RocketLake, AlderLakeS, AlderLakeP, RaptorLakeS, RaptorLakeP };
-enum class Display : uint32_t { Unknown, XeD = 12, XeLPD = 13 };
+enum class Family : uint32_t { Unknown, TigerLake, AlderLakeN, RocketLake, AlderLakeS, AlderLakeP, RaptorLakeS, RaptorLakeP, MeteorLake };
+enum class Display : uint32_t { Unknown, XeD = 12, XeLPD = 13, XeLPDP = 14 };
 enum class GT : uint32_t { Unknown, TGLGT2, TGLG4, ADLNSmall };
 enum class Donor : uint32_t { Unknown, C004FC1A = 1 };
 struct DeviceEntry {
@@ -36,6 +37,7 @@ constexpr DeviceEntry DeviceTable[] {
     {0x46D4, Family::AlderLakeN, Display::XeLPD, GT::ADLNSmall, "Intel Graphics"},
     {0x4C8A, Family::RocketLake, Display::XeD, GT::Unknown, "Intel UHD Graphics 750"},
     {0x4C8B, Family::RocketLake, Display::XeD, GT::Unknown, "Intel UHD Graphics 730"},
+    {0x7D55, Family::MeteorLake, Display::XeLPDP, GT::Unknown, "Intel Arc Graphics"},
     {0x9A40, Family::TigerLake, Display::XeD, GT::TGLGT2, "Intel Iris Xe Graphics"},
     {0x9A49, Family::TigerLake, Display::XeD, GT::TGLGT2, "Intel Iris Xe Graphics"},
     {0x9A60, Family::TigerLake, Display::XeD, GT::Unknown, "Intel UHD Graphics"},
