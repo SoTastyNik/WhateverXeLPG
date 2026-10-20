@@ -18,6 +18,7 @@ def main():
     assert run(['xcrun','lipo','-archs',exe]).strip()=='x86_64'
     nm=run(['xcrun','nm',exe]);assert ' _kmod_info' in nm and ' __realmain' in nm
     undefined=run(['xcrun','nm','-u',exe])
+    assert '__ZN13IOFramebuffer9metaClassE' not in undefined, 'Do not bind to framebuffer metaclass data across kernel collections'
     forbidden=['chkstk','stack_chk','__cxa','DispatchE5IORPC','configWrite','_IOMalloc','_IOMemoryDescriptor']
     assert not any(x in undefined for x in forbidden),undefined
     # IOService's inherited vtable references its standard mapper even though
@@ -26,11 +27,11 @@ def main():
     libraries={x:'10.0.0' for x in ['com.apple.kpi.bsd','com.apple.kpi.iokit','com.apple.kpi.libkern','com.apple.kpi.mach','com.apple.kpi.dsep','com.apple.kpi.unsupported']}
     libraries.update({'com.apple.iokit.IOPCIFamily':'1.1','com.apple.iokit.IOGraphicsFamily':'585.1'})
     identity='org.whateverxelpg.MTLGraphicsDiag'
-    info=dict(CFBundleIdentifier=identity,CFBundleExecutable='MTLGraphicsDiag',CFBundleName='MTLGraphicsDiag',CFBundleVersion='0.0.1',CFBundleShortVersionString='0.0.1',CFBundlePackageType='KEXT',OSBundleRequired='Root',OSBundleLibraries=libraries,IOKitPersonalities={identity:dict(CFBundleIdentifier=identity,IOClass='MTLGraphicsDiag',IOMatchCategory='MTLGraphicsDiag',IOProviderClass='IOResources',IOResourceMatch='IOKit')})
+    info=dict(CFBundleIdentifier=identity,CFBundleExecutable='MTLGraphicsDiag',CFBundleName='MTLGraphicsDiag',CFBundleVersion='0.0.2',CFBundleShortVersionString='0.0.2',CFBundlePackageType='KEXT',OSBundleRequired='Root',OSBundleLibraries=libraries,IOKitPersonalities={identity:dict(CFBundleIdentifier=identity,IOClass='MTLGraphicsDiag',IOMatchCategory='MTLGraphicsDiag',IOProviderClass='IOResources',IOResourceMatch='IOKit')})
     (contents/'Info.plist').write_bytes(plistlib.dumps(info))
     manifest=dict(identifier=identity,source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),binary_sha256=hashlib.sha256(data).hexdigest(),kernel='20G165 / xnu-7195.141.6~3',physical='8086:7D55 revision08',boot_argument='-mtlgraphicsdiag',required_sdk_commit='05094e5e88cec7caedbfb35e8449ed0db94bf95b')
     (out/'BUILD.json').write_text(json.dumps(manifest,indent=2)+'\n');(out/'undefined-symbols.txt').write_text(undefined)
-    archive=out/'MTLGraphicsDiag-0.0.1.zip'
+    archive=out/'MTLGraphicsDiag-0.0.2.zip'
     with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
         for p in sorted((out/'MTLGraphicsDiag.kext').rglob('*')):
             if p.is_file():z.write(p,p.relative_to(out))

@@ -76,7 +76,9 @@ static void snapshot(IOPCIDevice *gpu,unsigned seconds) {
                   fb->getMetaClass()->getClassName(),provider?provider->getName():"NONE",fb->isInactive(),fb->getBusyState());
             // Only query the verified native class, never an unknown GPU backend.
             if(isBoot && provider==gpu && !fb->isInactive() && !fb->getBusyState()) {
-                auto framebuffer=OSDynamicCast(IOFramebuffer,fb);IODisplayModeID mode=0;IOIndex depth=0;IOPixelInformation pixel{};
+                // isBoot above checks the class by name. Avoid an imported metaclass
+                // data pointer from a separately loaded kernel collection.
+                auto framebuffer=static_cast<IOFramebuffer *>(fb);IODisplayModeID mode=0;IOIndex depth=0;IOPixelInformation pixel{};
                 auto result=framebuffer->getCurrentDisplayMode(&mode,&depth);
                 auto pixelResult=result==kIOReturnSuccess?framebuffer->getPixelInformation(mode,depth,kIOFBSystemAperture,&pixel):result;
                 IOLog("MTLGD boot mode rc=0x%x mode=%d depth=%d pixelrc=0x%x %ux%u stride=%u bpp=%u\n",
@@ -120,7 +122,7 @@ extern "C" kern_return_t MTLGraphicsDiag_stop(kmod_info_t *,void *) {return KERN
 extern "C" {
 extern kern_return_t _start(kmod_info_t *,void *);
 extern kern_return_t _stop(kmod_info_t *,void *);
-KMOD_EXPLICIT_DECL(org.whateverxelpg.MTLGraphicsDiag,"0.0.1",_start,_stop)
+KMOD_EXPLICIT_DECL(org.whateverxelpg.MTLGraphicsDiag,"0.0.2",_start,_stop)
 kmod_start_func_t *_realmain=MTLGraphicsDiag_start;
 kmod_stop_func_t *_antimain=MTLGraphicsDiag_stop;
 int _kext_apple_cc=__APPLE_CC__;
