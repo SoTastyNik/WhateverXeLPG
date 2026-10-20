@@ -1,9 +1,12 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Build an opt-in, read-only graphics diagnostic kext on macOS."""
 from pathlib import Path
 import argparse, hashlib, json, plistlib, struct, subprocess, zipfile
 ROOT=Path(__file__).resolve().parents[1]
-def run(cmd):return subprocess.check_output([str(x) for x in cmd],text=True,stderr=subprocess.STDOUT)
+def run(cmd):
+    try:return subprocess.check_output([str(x) for x in cmd],text=True,stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as error:
+        print(error.output,flush=True);raise
 def main():
     a=argparse.ArgumentParser(description=__doc__);a.add_argument('--sdk',type=Path,default=ROOT/'MacKernelSDK');a.add_argument('--output',type=Path,default=ROOT/'build/graphics-diagnostic');args=a.parse_args()
     sdk=args.sdk.resolve();out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
@@ -13,7 +16,7 @@ def main():
     run(['xcrun','ld','-arch','x86_64','-kext','-undefined','dynamic_lookup','-no_fixup_chains','-macos_version_min','10.6','-o',exe,obj,sdk/'Library/x86_64/libkmod.a'])
     data=exe.read_bytes();assert data[:4]==bytes.fromhex('cffaedfe');assert struct.unpack_from('<I',data,12)[0]==11,'Expected MH_KEXT_BUNDLE'
     assert run(['xcrun','lipo','-archs',exe]).strip()=='x86_64'
-    nm=run(['xcrun','nm',exe]);assert ' _kmod_info' in nm and ' _realmain' in nm
+    nm=run(['xcrun','nm',exe]);assert ' _kmod_info' in nm and ' __realmain' in nm
     undefined=run(['xcrun','nm','-u',exe])
     forbidden=['chkstk','stack_chk','__cxa','DispatchE5IORPC','configWrite','mapDeviceMemory','_IOMalloc','_IOMemoryDescriptor']
     assert not any(x in undefined for x in forbidden),undefined
