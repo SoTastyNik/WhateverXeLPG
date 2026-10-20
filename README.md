@@ -106,6 +106,7 @@ Alder Lake-N / Twin Lake.
 | `-wexbeta` | Bypass the plugin's OS-version check. Exact kernel/driver checks still apply. |
 | `-wex-tgl-off` | Disable the Tiger Lake path. |
 | `-wex-mtl-probe` | Opt-in read-only display-IP probe for physical Meteor Lake `7D55`, revision `08`, on Big Sur `20G1443`. Requires an unmodified device ID and firmware-enabled PCI memory access. Suppresses normal backend dispatch for this physical GPU, including with an override; it does not enable display output or acceleration. |
+| `-mtlgraphicsdiag` | Enable the separate `MTLGraphicsDiag.kext` observer on physical `7D55`, revision `08`, with the exact Big Sur `20G165` kernel. It reports console/framebuffer state and selected process presence without enabling display output or acceleration. |
 
 ## Roadmap
 
@@ -122,6 +123,8 @@ Alder Lake-N / Twin Lake.
 - Xe2 and later architectures
 
 ## Build and test
+
+The optional standalone `MTLGraphicsDiag.kext` requires MacKernelSDK and the macOS command-line tools, without Lilu or the Xe root patch. Build it with `python3 tools/build_graphics_diagnostic.py`; output is written to `build/graphics-diagnostic`. Load it separately through OpenCore and enable `-mtlgraphicsdiag`. Its exact `20G165` kernel guard is independent of WhateverXe's graphics-driver guards.
 
 Use macOS with Xcode command-line tools, Python 3.9 or newer, MacKernelSDK and
 Lilu's development headers/library. Place `MacKernelSDK/` and `Lilu.kext/` in the

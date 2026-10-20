@@ -1,0 +1,33 @@
+﻿name: Recovery graphics diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: ['meteor-lake/graphics-diagnostics']
+    paths: ['tools/MTLGraphicsDiag.cpp', 'tools/build_graphics_diagnostic.py', '.github/workflows/graphics-diagnostic.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15-intel
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: acidanthera/MacKernelSDK
+          ref: 05094e5e88cec7caedbfb35e8449ed0db94bf95b
+          path: MacKernelSDK
+          persist-credentials: false
+      - name: Build and validate diagnostic kext
+        run: python3 tools/build_graphics_diagnostic.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MTLGraphicsDiag
+          path: |
+            build/graphics-diagnostic/MTLGraphicsDiag-0.0.1.zip
+            build/graphics-diagnostic/BUILD.json
+            build/graphics-diagnostic/undefined-symbols.txt
+          if-no-files-found: error
+          retention-days: 14

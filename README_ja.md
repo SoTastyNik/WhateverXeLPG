@@ -82,6 +82,7 @@ Alder Lake-N / Twin Lakeで世代選択や個別機能の有効化引数を追�
 | `-wexbeta` | プラグインのOSバージョンチェックを回避する。kernel／driverの一致条件は維持する。 |
 | `-wex-tgl-off` | Tiger Lakeの処理を無効にする。 |
 | `-wex-mtl-probe` | Big Sur `20G1443`上で、物理Meteor Lake `7D55`、revision `08`のdisplay IPを読み取り専用で調べる任意の機能。device IDが変更されておらず、ファームウェアがPCIメモリアクセスを有効にしている必要があります。この物理GPUでは上書き設定があっても通常のバックエンド処理を抑止します。画面出力やアクセラレーションを有効にするものではありません。 |
+| `-mtlgraphicsdiag` | 単独の `MTLGraphicsDiag.kext` 診断を有効にします。物理 `7D55`、revision `08`、Big Sur `20G165` の一致するカーネルのみを対象に、コンソールとフレームバッファの状態、および一部プロセスの存在を確認します。画面出力やアクセラレーションは有効にしません。 |
 
 ## ロードマップ
 
@@ -98,6 +99,8 @@ Alder Lake-N / Twin Lakeで世代選択や個別機能の有効化引数を追�
 - Xe2以降のアーキテクチャへの対応
 
 ## ビルドとテスト
+
+任意の単独診断 `MTLGraphicsDiag.kext` には MacKernelSDK と macOS command-line tools が必要です。Lilu と Xe root patch は不要です。`python3 tools/build_graphics_diagnostic.py` でビルドし、出力は `build/graphics-diagnostic` に保存されます。OpenCore から個別に読み込み、`-mtlgraphicsdiag` を指定してください。診断の厳密な `20G165` カーネル条件は、WhateverXe のグラフィックスドライバ条件から独立しています。
 
 macOS、Xcode command-line tools、Python 3.9以降、MacKernelSDK、Liluの開発用ヘッダ／ライブラリを使用します。`MacKernelSDK/`と`Lilu.kext/`をリポジトリ直下に配置するか、`--sdk`と`--lilu`でパスを指定してください。
 
