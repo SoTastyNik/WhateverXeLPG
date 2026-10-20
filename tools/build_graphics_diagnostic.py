@@ -18,8 +18,11 @@ def main():
     assert run(['xcrun','lipo','-archs',exe]).strip()=='x86_64'
     nm=run(['xcrun','nm',exe]);assert ' _kmod_info' in nm and ' __realmain' in nm
     undefined=run(['xcrun','nm','-u',exe])
-    forbidden=['chkstk','stack_chk','__cxa','DispatchE5IORPC','configWrite','mapDeviceMemory','_IOMalloc','_IOMemoryDescriptor']
+    forbidden=['chkstk','stack_chk','__cxa','DispatchE5IORPC','configWrite','_IOMalloc','_IOMemoryDescriptor']
     assert not any(x in undefined for x in forbidden),undefined
+    # IOService's inherited vtable references its standard mapper even though
+    # the observer never calls it. Reject any additional mapping imports.
+    assert all('mapDeviceMemory' not in x or x=='__ZN9IOService24mapDeviceMemoryWithIndexEjj' for x in undefined.splitlines()),undefined
     libraries={x:'10.0.0' for x in ['com.apple.kpi.bsd','com.apple.kpi.iokit','com.apple.kpi.libkern','com.apple.kpi.mach','com.apple.kpi.dsep','com.apple.kpi.unsupported']}
     libraries.update({'com.apple.iokit.IOPCIFamily':'1.1','com.apple.iokit.IOGraphicsFamily':'585.1'})
     identity='org.whateverxelpg.MTLGraphicsDiag'
